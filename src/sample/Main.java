@@ -6,9 +6,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.input.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -108,8 +113,23 @@ public class Main extends Application {
         root.getChildren().add(availableText);
         root.getChildren().add(pickedText);
 
-        final Text availableTarget = new Text(availableTextX, availableTextY+30, "Robot available:DROP HERE");
-        final Text pickedTarget = new Text(pickedTextX, pickedTextY+30, "Robot picked:DROP HERE");
+        final Text availableTarget = new Text(availableTextX, availableTextY+30, "Robot available: DROP HERE");
+        //final Text pickedTarget = new Text(pickedTextX, pickedTextY+30, "Robot picked:DROP HERE");
+
+        final Rectangle pickedRect = new Rectangle(pickedTextX, pickedTextY+10, 200, 300);
+        pickedRect.setFill(null);
+        pickedRect.setStroke(Color.BLACK);
+        pickedRect.toBack();
+        root.getChildren().add(pickedRect);
+
+        final TextFlow pickedTarget = new TextFlow(
+                new Text("Robot Picked"), new Hyperlink("Drop Here")
+        );
+        pickedTarget.setLayoutX(pickedTextX);
+        pickedTarget.setLayoutY(pickedTextY+10);
+        pickedTarget.setPrefSize(200,300);
+        pickedTarget.toBack();
+
         final Text allianceTarget = new Text(allianceTextX, allianceTextY, "Add to Alliance:DROP HERE");
 
         //System.out.println("Have " + teamList.size() + " robots");
@@ -120,6 +140,9 @@ public class Main extends Application {
         for (int teamNum : teamList) {
             //System.out.println(teamNum);
             Text teamText = new Text(0,0,Integer.toString(teamNum));
+            if (teamNum == 1153) {
+                teamText.setFill(Color.RED);
+            }
             // create an event handler to handle drag and drop
             teamText.setOnDragDetected(new EventHandler<MouseEvent>() {
                 @Override
@@ -138,6 +161,7 @@ public class Main extends Application {
                 public void handle(DragEvent event) {
                     if (event.getTransferMode() == TransferMode.MOVE) {
                         //teamText.setText("");
+                        teamText.toFront();
                     }
                     event.consume();
                 }
@@ -154,6 +178,7 @@ public class Main extends Application {
         pickedTarget.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
+                //System.out.println("dragedOver");
                 if (event.getGestureSource() != pickedTarget &&
                         event.getDragboard().hasString() && isInPickedList(event.getDragboard().getString()) == false) {
                     /* allow both copy and move */
@@ -165,9 +190,10 @@ public class Main extends Application {
         pickedTarget.setOnDragEntered(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
+                //System.out.println("dragedEntered");
                 if (event.getGestureSource() != pickedTarget &&
                         event.getDragboard().hasString()) {
-                    pickedTarget.setFill(Color.GREEN);
+                    //pickedTarget.setFill(Color.GREEN);
                 }
             }
         });
@@ -175,13 +201,15 @@ public class Main extends Application {
         pickedTarget.setOnDragExited(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                pickedTarget.setFill(Color.BLACK);
+                //System.out.println("dragedExited");
+                //pickedTarget.setFill(Color.BLACK);
             }
         });
 
         pickedTarget.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
+                //System.out.println("dragedDropped");
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasString()) {
@@ -336,6 +364,8 @@ public class Main extends Application {
 
         root.getChildren().add(allianceTarget);
         root.getChildren().add(availableTarget);
+        // put the target button in the back of the layout stack
+        pickedTarget.toBack();
         root.getChildren().add(pickedTarget);
         primaryStage.show();
     }
