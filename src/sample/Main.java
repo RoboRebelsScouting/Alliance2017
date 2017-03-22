@@ -35,7 +35,9 @@ public class Main extends Application {
 
     public List<Text> availableTeamTextList = new ArrayList<Text>();
     public List<Text> pickedTeamTextList = new ArrayList<Text>();
+    public List<Text> doNotPickTeamTextList = new ArrayList<Text>();
     public List<Text> allianceTeamTextList = new ArrayList<Text>();
+
 
     public Text strongestR1;
     public Text strongestR2;
@@ -53,10 +55,12 @@ public class Main extends Application {
 
     public int pickedTextX = 600;
     public int pickedTextY = 10;
-    public int availableTextX = 30;
-    public int availableTextY = 10;
+    public int availableTextX = 0;
+    public int availableTextY = 5;
     public int allianceTextX = 30;
     public int allianceTextY = 250;
+    public int doNotPickTextX = 400;
+    public int doNotPickTextY = 20;
 
     public int robot1TextX = 50;
     public int robot1TextY = 280;
@@ -72,9 +76,12 @@ public class Main extends Application {
     public int currX = startX;
     public int currY = startY;
     public int columns = 8;
-
+    public int pickedTeamColumns = 2;
+    public int doNotPickTeamColumns = 2;
     public int pickedTeamYIncr = 25;
     public int pickedTeamYOffset = 50;
+    public int doNotPickTeamYIncr = 25;
+    public int doNotPickTeamYOffset = 50;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -87,8 +94,9 @@ public class Main extends Application {
 
         int currNum = 1;
 
-        final Text availableText = new Text (availableTextX,availableTextY,"Available");
-        final Text pickedText = new Text (pickedTextX,pickedTextY,"Picked");
+        final Text availableText = new Text (availableTextX,availableTextY+30,"Available Robots");
+        final Text doNotPickText = new Text (doNotPickTextX,doNotPickTextY+15,"Do Not Pick");
+        final Text pickedText = new Text (pickedTextX,pickedTextY+25,"Robot Picked");
 
         final Text robot1Text = new Text (robot1TextX,robot1TextY,"Robot 1");
         final Text robot2Text = new Text (robot2TextX,robot2TextY,"Robot 2");
@@ -103,6 +111,7 @@ public class Main extends Application {
         root.getChildren().add(strongestR2);
         root.getChildren().add(strongestR3);
         root.getChildren().add(predictedScore);
+        root.getChildren().add(availableText);
 
         getStrongestAlliance();
 
@@ -110,11 +119,23 @@ public class Main extends Application {
         root.getChildren().add(robot2Text);
         root.getChildren().add(robot3Text);
 
-        root.getChildren().add(availableText);
+        root.getChildren().add(doNotPickText);
         root.getChildren().add(pickedText);
 
-        final Text availableTarget = new Text(availableTextX, availableTextY+30, "Robot available: DROP HERE");
+        //final Text availableTarget = new Text(availableTextX, availableTextY+30, "Robot available: DROP HERE");
         //final Text pickedTarget = new Text(pickedTextX, pickedTextY+30, "Robot picked:DROP HERE");
+        final Rectangle availableRect = new Rectangle(availableTextX, availableTextY+15, 400, 200);
+        availableRect.setFill(null);
+        availableRect.setStroke(Color.BLACK);
+        availableRect.toBack();
+        root.getChildren().add(availableRect);
+
+        final TextFlow availableTarget = new TextFlow(
+        );
+        availableTarget.setLayoutX(availableTextX);
+        availableTarget.setLayoutY(availableTextY+15);
+        availableTarget.setPrefSize(400,200);
+        availableTarget.toBack();
 
         final Rectangle pickedRect = new Rectangle(pickedTextX, pickedTextY+10, 200, 300);
         pickedRect.setFill(null);
@@ -122,16 +143,40 @@ public class Main extends Application {
         pickedRect.toBack();
         root.getChildren().add(pickedRect);
 
-        final TextFlow pickedTarget = new TextFlow(
-                new Text("Robot Picked"), new Hyperlink("Drop Here")
+         final TextFlow pickedTarget = new TextFlow(
         );
         pickedTarget.setLayoutX(pickedTextX);
         pickedTarget.setLayoutY(pickedTextY+10);
         pickedTarget.setPrefSize(200,300);
         pickedTarget.toBack();
 
-        final Text allianceTarget = new Text(allianceTextX, allianceTextY, "Add to Alliance:DROP HERE");
+        final Text allianceTargetText = new Text(allianceTextX, allianceTextY+15,"Add to Alliance");
 
+        final Rectangle allianceRect = new Rectangle(allianceTextX, allianceTextY, 300, 100);
+        allianceRect.setFill(null);
+        allianceRect.setStroke(Color.BLACK);
+        allianceRect.toBack();
+        root.getChildren().add(allianceRect);
+
+        final TextFlow allianceTarget = new TextFlow(
+        );
+        allianceTarget.setLayoutX(allianceTextX);
+        allianceTarget.setLayoutY(allianceTextY);
+        allianceTarget.setPrefSize(300,100);
+        allianceTarget.toBack();
+
+        final Rectangle doNotPickRect = new Rectangle(doNotPickTextX, doNotPickTextY, 200, 300);
+        doNotPickRect.setFill(null);
+        doNotPickRect.setStroke(Color.BLACK);
+        doNotPickRect.toBack();
+        root.getChildren().add(doNotPickRect);
+
+        final TextFlow doNotPickTarget = new TextFlow(
+        );
+        doNotPickTarget.setLayoutX(doNotPickTextX);
+        doNotPickTarget.setLayoutY(doNotPickTextY);
+        doNotPickTarget.setPrefSize(200,300);
+        doNotPickTarget.toBack();
         //System.out.println("Have " + teamList.size() + " robots");
 
         Collections.sort(teamList);
@@ -170,7 +215,6 @@ public class Main extends Application {
             root.getChildren().add(teamText);
         }
         placeAvailableTeams();
-
         ///////////////////////////////////////////////////////////////////////
         // Handle pickedTarget
         ///////////////////////////////////////////////////////////////////////
@@ -215,13 +259,7 @@ public class Main extends Application {
                 if (db.hasString()) {
                     //target.setText(db.getString());
 
-                    // move target text below here
-                    int pickedX = pickedTextX;
-                    int pickedY = pickedTextY + pickedTeamYOffset + pickedTeamTextList.size()*pickedTeamYIncr;
-
                     Text t = getTextObject(db.getString());
-                    t.setX(pickedX);
-                    t.setY(pickedY);
 
                     if (isInAvailableList(t.getText())) {
                         availableTeamTextList.remove(t);
@@ -230,6 +268,7 @@ public class Main extends Application {
                         allianceTeamTextList.remove(t);
                     }
                     pickedTeamTextList.add(t);
+                    placePickedTeams();
                     getStrongestAlliance();
                     success = true;
                 }
@@ -260,7 +299,7 @@ public class Main extends Application {
             public void handle(DragEvent event) {
                 if (event.getGestureSource() != availableTarget &&
                         event.getDragboard().hasString()) {
-                    availableTarget.setFill(Color.GREEN);
+                    //availableTarget.setFill(Color.GREEN);
                 }
             }
         });
@@ -268,7 +307,7 @@ public class Main extends Application {
         availableTarget.setOnDragExited(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                availableTarget.setFill(Color.BLACK);
+                /*availableTarget.setFill(Color.BLACK);*/
             }
         });
 
@@ -280,15 +319,81 @@ public class Main extends Application {
                 if (db.hasString()) {
 
                     Text t = getTextObject(db.getString());
-
+                    String tempString = db.getString();
                     if (isInPickedList(t.getText())) {
                         pickedTeamTextList.remove(t);
+                        placePickedTeams();
                     } else if (isInAllianceList(t.getText())) {
                         allianceTeamTextList.remove(t);
-                        getStrongestAlliance();
+                        placeAllianceTeams();
+                    }
+
+                    if (isInDoNotPickList(t.getText())) {
+                        doNotPickTeamTextList.remove(t);
+                        placeDoNotPickTeams();
                     }
                     availableTeamTextList.add(t);
+                    getStrongestAlliance();
                     placeAvailableTeams();
+                    success = true;
+                }
+
+                event.setDropCompleted(success);
+                event.consume();
+            }
+        });
+        doNotPickTarget.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                //System.out.println("dragedOver");
+                if (event.getGestureSource() != doNotPickTarget &&
+                        event.getDragboard().hasString() && isInDoNotPickList(event.getDragboard().getString()) == false) {
+                    /* allow both copy and move */
+                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+            }
+        });
+
+        doNotPickTarget.setOnDragEntered(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                //System.out.println("dragedEntered");
+                if (event.getGestureSource() != doNotPickTarget &&
+                        event.getDragboard().hasString()) {
+                    //pickedTarget.setFill(Color.GREEN);
+                }
+            }
+        });
+
+        doNotPickTarget.setOnDragExited(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                //System.out.println("dragedExited");
+                //pickedTarget.setFill(Color.BLACK);
+            }
+        });
+
+        doNotPickTarget.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                //System.out.println("dragedDropped");
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.hasString()) {
+                    //target.setText(db.getString());
+
+                    // move target text below here
+                    Text t = getTextObject(db.getString());
+
+                    if (isInAvailableList(t.getText())) {
+                        availableTeamTextList.remove(t);
+
+                    } else if (isInAllianceList(t.getText())) {
+                        allianceTeamTextList.remove(t);
+                    }
+                    doNotPickTeamTextList.add(t);
+                    placeDoNotPickTeams();
+                    getStrongestAlliance();
                     success = true;
                 }
 
@@ -318,7 +423,7 @@ public class Main extends Application {
             public void handle(DragEvent event) {
                 if (event.getGestureSource() != allianceTarget &&
                         event.getDragboard().hasString()) {
-                    allianceTarget.setFill(Color.GREEN);
+                    //allianceTarget.setFill(Color.GREEN);
                 }
             }
         });
@@ -326,7 +431,7 @@ public class Main extends Application {
         allianceTarget.setOnDragExited(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                allianceTarget.setFill(Color.BLACK);
+                //allianceTarget.setFill(Color.BLACK);
             }
         });
 
@@ -339,12 +444,6 @@ public class Main extends Application {
 
                     Text t = getTextObject(db.getString());
 
-                    int currentX = robot1TextX + allianceTeamTextList.size()*80;
-                    int currentY = robot1TextY + 30 ;
-
-                    t.setX(currentX);
-                    t.setY(currentY);
-
                     if (isInAvailableList(t.getText())) {
                         availableTeamTextList.remove(t);
 
@@ -352,6 +451,7 @@ public class Main extends Application {
                         pickedTeamTextList.remove(t);
                     }
                     allianceTeamTextList.add(t);
+                    placeAllianceTeams();
                     getStrongestAlliance();
                     success = true;
                 }
@@ -364,8 +464,11 @@ public class Main extends Application {
 
         root.getChildren().add(allianceTarget);
         root.getChildren().add(availableTarget);
+        root.getChildren().add(doNotPickTarget);
         // put the target button in the back of the layout stack
         pickedTarget.toBack();
+        doNotPickTarget.toBack();
+        availableTarget.toBack();
         root.getChildren().add(pickedTarget);
         primaryStage.show();
     }
@@ -515,6 +618,76 @@ public class Main extends Application {
             currNum++;
         }
     }
+
+    public void placeAllianceTeams() {
+        int currNum = 0;
+        int columns = 3;
+        currY = robot1TextY+30;
+        //System.out.println("size of available team list = " + availableTeamTextList.size());
+        Collections.sort(allianceTeamTextList, new Comparator<Text>() {
+            public int compare(Text o1, Text o2) {
+                if (Integer.parseInt(o1.getText()) == Integer.parseInt(o2.getText()))
+                    return 0;
+                return  Integer.parseInt(o1.getText())> Integer.parseInt(o2.getText()) ? 1 : -1;
+            }
+        });
+        for (Text t : allianceTeamTextList) {
+            currX = (currNum % columns)*incrX + robot1TextX;
+            if (currNum % columns == 3) {
+                currX = robot1TextX;
+                currY += incrY;
+            }
+            t.setX(currX);
+            t.setY(currY);
+            currNum++;
+        }
+    }
+    // loop through available team list and place teams
+    public void placePickedTeams() {
+        int currNum = 0;
+        currY = pickedTextY + pickedTeamYOffset;
+        //System.out.println("size of picked team list = " + pickedTeamTextList.size());
+        Collections.sort(pickedTeamTextList, new Comparator<Text>() {
+            public int compare(Text o1, Text o2) {
+                if (Integer.parseInt(o1.getText()) == Integer.parseInt(o2.getText()))
+                    return 0;
+                return  Integer.parseInt(o1.getText())> Integer.parseInt(o2.getText()) ? 1 : -1;
+            }
+        });
+        for (Text t : pickedTeamTextList) {
+            currX = (currNum % pickedTeamColumns)*incrX + pickedTextX;
+            if (currNum % pickedTeamColumns == 0) {
+                currX = pickedTextX;
+                currY += incrY;
+            }
+            t.setX(currX);
+            t.setY(currY);
+            currNum++;
+        }
+    }
+
+    public void placeDoNotPickTeams() {
+        int currNum = 0;
+        currY = doNotPickTextY + doNotPickTeamYOffset;
+        //System.out.println("size of picked team list = " + pickedTeamTextList.size());
+        Collections.sort(doNotPickTeamTextList, new Comparator<Text>() {
+            public int compare(Text o1, Text o2) {
+                if (Integer.parseInt(o1.getText()) == Integer.parseInt(o2.getText()))
+                    return 0;
+                return  Integer.parseInt(o1.getText())> Integer.parseInt(o2.getText()) ? 1 : -1;
+            }
+        });
+        for (Text t : doNotPickTeamTextList) {
+            currX = (currNum % doNotPickTeamColumns)*incrX + doNotPickTextX;
+            if (currNum % doNotPickTeamColumns == 0) {
+                currX = doNotPickTextX;
+                currY += incrY;
+            }
+            t.setX(currX);
+            t.setY(currY);
+            currNum++;
+        }
+    }
     // given a robot number string, return the text
     public Text getTextObject (String robotNumber) {
         // check all three lists
@@ -525,6 +698,12 @@ public class Main extends Application {
         }
         // check all three lists
         for (Text t : pickedTeamTextList) {
+            if (t.getText().toString().equalsIgnoreCase(robotNumber)) {
+                return t;
+            }
+        }
+
+        for (Text t : doNotPickTeamTextList) {
             if (t.getText().toString().equalsIgnoreCase(robotNumber)) {
                 return t;
             }
@@ -542,6 +721,17 @@ public class Main extends Application {
         // check all three lists
         // check all three lists
         for (Text t : pickedTeamTextList) {
+            if (t.getText().toString().equalsIgnoreCase(robotNumberString)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public boolean isInDoNotPickList (String robotNumberString) {
+        // check all three lists
+        // check all three lists
+        for (Text t : doNotPickTeamTextList) {
             if (t.getText().toString().equalsIgnoreCase(robotNumberString)) {
                 return true;
             }
