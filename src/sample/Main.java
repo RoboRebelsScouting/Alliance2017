@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static java.awt.SystemColor.text;
+
 public class Main extends Application {
 
     public static String userDir = System.getProperty("user.home");
@@ -44,44 +46,80 @@ public class Main extends Application {
     public Text strongestR3;
     public Text predictedScore;
 
-    public int strongestR1X = 50;
-    public int strongestR1Y = 370;
-    public int strongestR2X = 130;
-    public int strongestR2Y = 370;
-    public int strongestR3X = 210;
-    public int strongestR3Y = 370;
-    public int predictedScoreX = 290;
-    public int predictedScoreY = 370;
+    public Text avgTeleGearsText;
+    public Text avgAutoGearsText;
+    public Text avgTeleFuelText;
+    public Text avgAutoFuelText;
+    public Text avgClimbsText;
 
-    public int pickedTextX = 600;
+    public int avgAutoFuelX = 400;
+    public int avgAutoFuelY = 550;
+    public int avgTeleFuelX = 510;
+    public int avgTeleFuelY = 550;
+    public int avgAutoGearsX = 630;
+    public int avgAutoGearsY = 550;
+    public int avgTeleGearsX = 745;
+    public int avgTeleGearsY = 550;
+    public int avgClimbsX = 835;
+    public int avgClimbsY = 550;
+
+    public int strongestR1X = 17;
+    public int strongestR1Y = 550;
+    public int strongestR2X = 97;
+    public int strongestR2Y = 550;
+    public int strongestR3X = 177;
+    public int strongestR3Y = 550;
+    public int predictedScoreX = 275;
+    public int predictedScoreY = 550;
+
+    public int r1LabelX = 10;
+    public int r1LabelY = 500;
+    public int r2LabelX = 90;
+    public int r2LabelY = 500;
+    public int r3LabelX = 170;
+    public int r3LabelY = 500;
+    public int predictedScoreLabelX = 240;
+    public int predictedScoreLabelY = 500;
+    public int avgTeleFuelLabelX = 470;
+    public int avgTeleFuelLabelY = 500;
+    public int avgAutoFuelLabelX = 360;
+    public int avgAutoFuelLabelY = 500;
+    public int avgTeleGearsLabelX = 700;
+    public int avgTeleGearsLabelY = 500;
+    public int avgAutoGearsLabelX = 580;
+    public int avgAutoGearsLabelY = 500;
+    public int avgClimbsLabelX = 810;
+    public int avgClimbsLabelY = 500;
+
+    public int pickedTextX = 700;
     public int pickedTextY = 10;
     public int availableTextX = 0;
     public int availableTextY = 5;
     public int allianceTextX = 30;
-    public int allianceTextY = 250;
-    public int doNotPickTextX = 400;
+    public int allianceTextY = 350;
+    public int doNotPickTextX = 450;
     public int doNotPickTextY = 20;
 
     public int robot1TextX = 50;
-    public int robot1TextY = 280;
-    public int robot2TextX = 130;
-    public int robot2TextY = 280;
-    public int robot3TextX = 210;
-    public int robot3TextY = 280;
+    public int robot1TextY = 380;
+    public int robot2TextX = 140;
+    public int robot2TextY = 380;
+    public int robot3TextX = 240;
+    public int robot3TextY = 380;
 
     public int startX = 10;
     public int startY = 50;
     public int incrX = 50;
-    public int incrY = 25;
+    public int incrY = 40;
     public int currX = startX;
     public int currY = startY;
     public int columns = 8;
-    public int pickedTeamColumns = 2;
-    public int doNotPickTeamColumns = 2;
+    public int pickedTeamColumns = 4;
+    public int doNotPickTeamColumns = 4;
     public int pickedTeamYIncr = 25;
-    public int pickedTeamYOffset = 50;
+    public int pickedTeamYOffset = 30;
     public int doNotPickTeamYIncr = 25;
-    public int doNotPickTeamYOffset = 50;
+    public int doNotPickTeamYOffset = 21;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -90,23 +128,100 @@ public class Main extends Application {
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         Group root = new Group();
         primaryStage.setTitle("Alliance Selector");
-        primaryStage.setScene(new Scene(root, 800, 450));
+        primaryStage.setScene(new Scene(root, 900, 650));
 
         int currNum = 1;
 
-        final Text availableText = new Text (availableTextX,availableTextY+30,"Available Robots");
-        final Text doNotPickText = new Text (doNotPickTextX,doNotPickTextY+15,"Do Not Pick");
-        final Text pickedText = new Text (pickedTextX,pickedTextY+25,"Robot Picked");
+        final Text availableText = new Text (availableTextX+125,availableTextY+35,"Available Robots");
+        availableText.setFill(Color.MEDIUMBLUE);
+        availableText.setStyle("-fx-font: 20 cambria");
+        final Text doNotPickText = new Text (doNotPickTextX+50,doNotPickTextY+20,"Do Not Pick");
+        doNotPickText.setFill(Color.RED);
+        doNotPickText.setStyle("-fx-font: 20 cambria");
+        final Text pickedText = new Text (pickedTextX+50,pickedTextY+30,"Robot Picked");
+        pickedText.setFill(Color.MEDIUMBLUE);
+        pickedText.setStyle("-fx-font: 20 cambria");
 
         final Text robot1Text = new Text (robot1TextX,robot1TextY,"Robot 1");
-        final Text robot2Text = new Text (robot2TextX,robot2TextY,"Robot 2");
-        final Text robot3Text = new Text (robot3TextX,robot3TextY,"Robot 3");
-
+        robot1Text.setFill(Color.RED);
+        robot1Text.setStyle("-fx-font: 18 cambria");
+        final Text robot2Text = new Text (robot2TextX+10,robot2TextY,"Robot 2");
+        robot2Text.setFill(Color.RED);
+        robot2Text.setStyle("-fx-font: 18 cambria");
+        final Text robot3Text = new Text (robot3TextX+10,robot3TextY,"Robot 3");
+        robot3Text.setFill(Color.RED);
+        robot3Text.setStyle("-fx-font: 18 cambria");
         strongestR1 = new Text(strongestR1X,strongestR1Y,"");
+        strongestR1.setFill(Color.RED);
+        strongestR1.setStyle("-fx-font: 16 cambria");
         strongestR2 = new Text(strongestR2X,strongestR2Y,"");
+        strongestR2.setFill(Color.RED);
+        strongestR2.setStyle("-fx-font: 16 cambria");
         strongestR3 = new Text(strongestR3X,strongestR3Y,"");
+        strongestR3.setFill(Color.RED);
+        strongestR3.setStyle("-fx-font: 16 cambria");
         predictedScore = new Text(predictedScoreX,predictedScoreY,"");
+        predictedScore.setFill(Color.RED);
+        predictedScore.setStyle("-fx-font: 16 cambria");
 
+        avgTeleFuelText = new Text (avgTeleFuelX,avgTeleFuelY, "");
+        avgTeleFuelText.setFill(Color.RED);
+        avgTeleFuelText.setStyle("-fx-font: 16 cambria");
+        avgAutoFuelText = new Text (avgAutoFuelX,avgAutoFuelY, "");
+        avgAutoFuelText.setFill(Color.RED);
+        avgAutoFuelText.setStyle("-fx-font: 16 cambria");
+        avgTeleGearsText = new Text (avgTeleGearsX,avgTeleGearsY, "");
+        avgTeleGearsText.setFill(Color.RED);
+        avgTeleGearsText.setStyle("-fx-font: 16 cambria");
+        avgAutoGearsText = new Text (avgAutoGearsX,avgAutoGearsY, "") ;
+        avgAutoGearsText.setFill(Color.RED);
+        avgAutoGearsText.setStyle("-fx-font: 16 cambria");
+        avgClimbsText = new Text (avgClimbsX,avgClimbsY, "");
+        avgClimbsText.setFill(Color.RED);
+        avgClimbsText.setStyle("-fx-font: 16 cambria");
+        root.getChildren().add(avgTeleFuelText);
+        root.getChildren().add(avgAutoFuelText);
+        root.getChildren().add(avgTeleGearsText);
+        root.getChildren().add(avgAutoGearsText);
+        root.getChildren().add(avgClimbsText);
+
+        Text r1Label = new Text(r1LabelX, r1LabelY, "Robot 1");
+        r1Label.setFill(Color.MEDIUMBLUE);
+        r1Label.setStyle("-fx-font: 16 cambria");
+        Text r2Label = new Text (r2LabelX, r2LabelY, "Robot 2");
+        r2Label.setFill(Color.MEDIUMBLUE);
+        r2Label.setStyle("-fx-font: 16 cambria");
+        Text r3Label = new Text (r3LabelX, r3LabelY, "Robot 3");
+        r3Label.setFill(Color.MEDIUMBLUE);
+        r3Label.setStyle("-fx-font: 16 cambria");
+        Text predictedScoreLabel = new Text (predictedScoreLabelX, predictedScoreLabelY, "Predicted Score");
+        predictedScoreLabel.setFill(Color.MEDIUMBLUE);
+        predictedScoreLabel.setStyle("-fx-font: 16 cambria");
+        Text avgTeleFuelLabel = new Text (avgTeleFuelLabelX, avgTeleFuelLabelY, "Avg. Tele Fuel");
+        avgTeleFuelLabel.setFill(Color.MEDIUMBLUE);
+        avgTeleFuelLabel.setStyle("-fx-font: 16 cambria");
+        Text avgAutoFuelLabel = new Text (avgAutoFuelLabelX, avgAutoFuelLabelY, "Avg. Auto Fuel");
+        avgAutoFuelLabel.setFill(Color.MEDIUMBLUE);
+        avgAutoFuelLabel.setStyle("-fx-font: 16 cambria");
+        Text avgAutoGearsLabel = new Text (avgAutoGearsLabelX, avgAutoGearsLabelY, "Avg. Auto Gears");
+        avgAutoGearsLabel.setFill(Color.MEDIUMBLUE);
+        avgAutoGearsLabel.setStyle("-fx-font: 16 cambria");
+        Text avgTeleGearsLabel = new Text (avgTeleGearsLabelX, avgTeleGearsLabelY, "Avg. Tele Gears");
+        avgTeleGearsLabel.setFill(Color.MEDIUMBLUE);
+        avgTeleGearsLabel.setStyle("-fx-font: 16 cambria");
+        Text avgClimbsLabel = new Text (avgClimbsLabelX, avgClimbsLabelY, "Avg Climbs");
+        avgClimbsLabel.setFill(Color.MEDIUMBLUE);
+        avgClimbsLabel.setStyle("-fx-font: 16 cambria");
+
+        root.getChildren().add(r1Label);
+        root.getChildren().add(r2Label);
+        root.getChildren().add(r3Label);
+        root.getChildren().add(predictedScoreLabel);
+        root.getChildren().add(avgTeleFuelLabel);
+        root.getChildren().add(avgAutoFuelLabel);
+        root.getChildren().add(avgAutoGearsLabel);
+        root.getChildren().add(avgTeleGearsLabel);
+        root.getChildren().add(avgClimbsLabel);
         root.getChildren().add(strongestR1);
         root.getChildren().add(strongestR2);
         root.getChildren().add(strongestR3);
@@ -124,9 +239,9 @@ public class Main extends Application {
 
         //final Text availableTarget = new Text(availableTextX, availableTextY+30, "Robot available: DROP HERE");
         //final Text pickedTarget = new Text(pickedTextX, pickedTextY+30, "Robot picked:DROP HERE");
-        final Rectangle availableRect = new Rectangle(availableTextX, availableTextY+15, 400, 200);
+        final Rectangle availableRect = new Rectangle(availableTextX, availableTextY+15, 400, 300);
         availableRect.setFill(null);
-        availableRect.setStroke(Color.BLACK);
+        availableRect.setStroke(Color.MEDIUMBLUE);
         availableRect.toBack();
         root.getChildren().add(availableRect);
 
@@ -134,12 +249,12 @@ public class Main extends Application {
         );
         availableTarget.setLayoutX(availableTextX);
         availableTarget.setLayoutY(availableTextY+15);
-        availableTarget.setPrefSize(400,200);
+        availableTarget.setPrefSize(400,300);
         availableTarget.toBack();
 
         final Rectangle pickedRect = new Rectangle(pickedTextX, pickedTextY+10, 200, 300);
         pickedRect.setFill(null);
-        pickedRect.setStroke(Color.BLACK);
+        pickedRect.setStroke(Color.MEDIUMBLUE);
         pickedRect.toBack();
         root.getChildren().add(pickedRect);
 
@@ -154,7 +269,7 @@ public class Main extends Application {
 
         final Rectangle allianceRect = new Rectangle(allianceTextX, allianceTextY, 300, 100);
         allianceRect.setFill(null);
-        allianceRect.setStroke(Color.BLACK);
+        allianceRect.setStroke(Color.RED);
         allianceRect.toBack();
         root.getChildren().add(allianceRect);
 
@@ -167,7 +282,7 @@ public class Main extends Application {
 
         final Rectangle doNotPickRect = new Rectangle(doNotPickTextX, doNotPickTextY, 200, 300);
         doNotPickRect.setFill(null);
-        doNotPickRect.setStroke(Color.BLACK);
+        doNotPickRect.setStroke(Color.RED);
         doNotPickRect.toBack();
         root.getChildren().add(doNotPickRect);
 
@@ -185,6 +300,7 @@ public class Main extends Application {
         for (int teamNum : teamList) {
             //System.out.println(teamNum);
             Text teamText = new Text(0,0,Integer.toString(teamNum));
+            teamText.setStyle("-fx-font: 18 cambria");
             if (teamNum == 1153) {
                 teamText.setFill(Color.RED);
             }
@@ -488,6 +604,11 @@ public class Main extends Application {
         int r2 = 0;
         int r3 = 0;
         double strength = 0.0;
+        double avgAutoFuel = 0;
+        double avgTeleFuel = 0;
+        double avgAutoGears = 0;
+        double avgTeleGears = 0;
+        double avgClimbs = 0;
         // if no picked alliance members, then just use strongest alliance
         if (allianceTeamTextList.size() == 0) {
             int c =0;
@@ -496,13 +617,21 @@ public class Main extends Application {
                 // make sure robots are not in the unavailable list
                 if (!isInPickedList(Integer.toString(adList.get(c).robot1)) &&
                         !isInPickedList(Integer.toString(adList.get(c).robot2)) &&
-                        !isInPickedList(Integer.toString(adList.get(c).robot3))) {
+                        !isInPickedList(Integer.toString(adList.get(c).robot3)) &&
+                        !isInDoNotPickList(Integer.toString(adList.get(c).robot1)) &&
+                        !isInDoNotPickList(Integer.toString(adList.get(c).robot2)) &&
+                        !isInDoNotPickList(Integer.toString(adList.get(c).robot3))){
                     keepSearching = false;
                     r1 = adList.get(c).robot1;
                     r2 = adList.get(c).robot2;
                     r3 = adList.get(c).robot3;
 
                     strength = adList.get(c).allianceStrength;
+                    avgAutoFuel = adList.get(c).avgAutoFuel;
+                    avgTeleFuel = adList.get(c).avgTeleFuel;
+                    avgAutoGears = adList.get(c).avgAutoGear;
+                    avgTeleGears = adList.get(c).avgTeleGear;
+                    avgClimbs = adList.get(c).avgTeleClimb;
                 }
                 c++;
                 if (c >= adList.size()) {
@@ -519,13 +648,21 @@ public class Main extends Application {
                     // make sure robot2 and robot3 are not in the unavailable list
                     if (!isInPickedList(Integer.toString(adList.get(c).robot1)) &&
                             !isInPickedList(Integer.toString(adList.get(c).robot2)) &&
-                            !isInPickedList(Integer.toString(adList.get(c).robot3))) {
+                            !isInPickedList(Integer.toString(adList.get(c).robot3)) &&
+                            !isInDoNotPickList(Integer.toString(adList.get(c).robot1)) &&
+                            !isInDoNotPickList(Integer.toString(adList.get(c).robot2)) &&
+                            !isInDoNotPickList(Integer.toString(adList.get(c).robot3))){
                         keepSearching = false;
                         // set all of the robot numbers
                         r1 = adList.get(c).robot1;
                         r2 = adList.get(c).robot2;
                         r3 = adList.get(c).robot3;
                         strength = adList.get(c).allianceStrength;
+                        avgAutoFuel = adList.get(c).avgAutoFuel;
+                        avgTeleFuel = adList.get(c).avgTeleFuel;
+                        avgAutoGears = adList.get(c).avgAutoGear;
+                        avgTeleGears = adList.get(c).avgTeleGear;
+                        avgClimbs = adList.get(c).avgTeleClimb;
                     }
                 }
                 c++;
@@ -547,13 +684,21 @@ public class Main extends Application {
                     // make sure r3 is available
                     if (!isInPickedList(Integer.toString(adList.get(c).robot1)) &&
                             !isInPickedList(Integer.toString(adList.get(c).robot2)) &&
-                            !isInPickedList(Integer.toString(adList.get(c).robot3))) {
+                            !isInPickedList(Integer.toString(adList.get(c).robot3)) &&
+                            !isInDoNotPickList(Integer.toString(adList.get(c).robot1)) &&
+                            !isInDoNotPickList(Integer.toString(adList.get(c).robot2)) &&
+                            !isInDoNotPickList(Integer.toString(adList.get(c).robot3))){
                         keepSearching = false;
                         // set all of the robot numbers
                         r1 = adList.get(c).robot1;
                         r2 = adList.get(c).robot2;
                         r3 = adList.get(c).robot3;
                         strength = adList.get(c).allianceStrength;
+                        avgAutoFuel = adList.get(c).avgAutoFuel;
+                        avgTeleFuel = adList.get(c).avgTeleFuel;
+                        avgAutoGears = adList.get(c).avgAutoGear;
+                        avgTeleGears = adList.get(c).avgTeleGear;
+                        avgClimbs = adList.get(c).avgTeleClimb;
                     }
                 }
                 c++;
@@ -581,6 +726,11 @@ public class Main extends Application {
                     r2 = adList.get(c).robot2;
                     r3 = adList.get(c).robot3;
                     strength = adList.get(c).allianceStrength;
+                    avgAutoFuel = adList.get(c).avgAutoFuel;
+                    avgTeleFuel = adList.get(c).avgTeleFuel;
+                    avgAutoGears = adList.get(c).avgAutoGear;
+                    avgTeleGears = adList.get(c).avgTeleGear;
+                    avgClimbs = adList.get(c).avgTeleClimb;
 
                 }
                 c++;
@@ -593,6 +743,11 @@ public class Main extends Application {
         strongestR2.setText(Integer.toString(r2));
         strongestR3.setText(Integer.toString(r3));
         predictedScore.setText(String.format("%.1f",strength));
+        avgAutoFuelText.setText(String.format("%.1f",avgAutoFuel));
+        avgTeleFuelText.setText(String.format("%.1f", avgTeleFuel));
+        avgAutoGearsText.setText(String.format("%.1f", avgAutoGears));
+        avgTeleGearsText.setText(String.format("%.1f", avgTeleGears));
+        avgClimbsText.setText(String.format("%.1f", avgClimbs));
     }
 
     // loop through available team list and place teams
@@ -632,7 +787,7 @@ public class Main extends Application {
             }
         });
         for (Text t : allianceTeamTextList) {
-            currX = (currNum % columns)*incrX + robot1TextX;
+            currX = (currNum % columns)*(incrX+55) + robot1TextX;
             if (currNum % columns == 3) {
                 currX = robot1TextX;
                 currY += incrY;
